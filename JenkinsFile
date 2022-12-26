@@ -1,0 +1,53 @@
+
+def IPaddress;
+pipeline{
+    agent {
+        label ('built-in')
+    }
+    tools {
+      terraform 'terraform'
+    }
+   /* environment{
+        IPaddress = 'inventory.txt'
+    }*/
+     parameters {
+         string defaultValue: "22.33.44.55",
+                 description: 'Target URL to scan',
+                 name: 'TARGET'
+     }
+    stages{
+        stage("GIT checkout"){
+            steps{
+              git branch: 'main', credentialsId: 'GITCredentials', url: 'https://github.com/Tharani95/terraform_sample.git'  
+            }
+            
+        }
+        stage("Terraform Init"){
+            steps{
+              sh 'terraform init' 
+            }
+            
+        }
+        stage("Terraform Plan"){
+            steps{
+              sh 'terraform plan -var-file=variable.tfvars' 
+            }
+            
+        }
+        stage("Terraform Apply"){
+            steps{
+              sh 'terraform apply -var-file=variable.tfvars --auto-approve' 
+            }
+            
+        }
+       stage("Terraform output"){
+            steps{
+             // TARGET = sh 'terraform output -raw public_ip'
+           sh 'terraform output -raw public_ip > inventory.txt'
+            
+            }
+       
+       
+       
+    }
+}
