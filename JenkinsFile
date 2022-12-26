@@ -46,8 +46,8 @@ pipeline{
            sh 'terraform output -raw public_ip > inventory.txt'
             
             }
-       
-       
+        }
+        
        
     }
 }
